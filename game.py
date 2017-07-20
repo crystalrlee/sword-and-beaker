@@ -61,16 +61,11 @@ def get_strength_stats(main_container):
     strength_stats.grid(column = 0, row = 2)
     return strength_stats
 
-def get_moxie_stats(main_container):
-    moxie_stats = Label(main_container, text = "Moxie: 4/4", font = ("Helvetica", 14), bg = "white")
-    moxie_stats.grid(column = 0, row = 3)
-    return moxie_stats
-
 # Checks how many scuba suit pieces player has
-def get_scuba_stats(main_container):
-    scuba_stats = Label(main_container, text = "Scuba suit: 0/3", font = ("Helvetica", 14), bg = "white")
-    scuba_stats.grid(column = 0, row = 4)
-    return scuba_stats
+def get_lab_equipment_stats(main_container):
+    lab_equipment_stats = Label(main_container, text = "Lab Equipment: 0/3", font = ("Helvetica", 14), bg = "white")
+    lab_equipment_stats.grid(column = 0, row = 4)
+    return lab_equipment_stats
 
 def main():
     # Creates the main tk window object, called "root" by convention.
@@ -97,8 +92,7 @@ def main():
     # loads stat labels
     health_stats = get_health_stats(main_container)
     strength_stats = get_strength_stats(main_container)
-    moxie_stats = get_moxie_stats(main_container)
-    scuba_stats = get_scuba_stats(main_container)
+    lab_equpiment_stats = get_lab_equipment_stats(main_container)
 
     # opens the main game window, called "root"
     root.mainloop()
