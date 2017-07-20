@@ -9,6 +9,7 @@ game_text_state = {"beginning" : """Sword & Beaker\nA Python Adventure Game\n
 battling enemies along the way in order to find the lab equipment to carry out your condensed matter experiment.
 \n Good luck!""" }
 
+
 # Creates main container frame
 def get_main_container(root):
     main_container = Frame(root)
@@ -107,7 +108,6 @@ def main():
     health_stats = get_health_stats(main_container)
     strength_stats = get_strength_stats(main_container)
     lab_equpiment_stats = get_lab_equipment_stats(main_container)
-
 
 
     # opens the main game window, called "root"
