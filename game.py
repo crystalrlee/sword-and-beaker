@@ -31,10 +31,11 @@ class Game():
             "Click on the Map to get started.\n\nGood luck!"))
         self.game_text.grid(column = 1, row = 0, columnspan = 5)
 
-        # State variables: coffee, health, max health, strength
+        # State variables: coffee count, health, max health, location
         self.coffee = 0
         self.health = 5
         self.max_health = 5
+        self.location = "Intro"
 
         # Buttons
         self.map_button = Button(main_container, text="MAP", command = self.open_map)
@@ -48,13 +49,18 @@ class Game():
         self.run_away_button = Button(main_container, text="RUN AWAY!", state = DISABLED)
         self.run_away_button.grid(column = 5, row = 2)
 
-        # Health/Strength/Equipment Stats
+        # Health/Strength/Equipment Stats//Coffee count//Your location
         self.health_stats = Label(main_container, text = "Health: {}/{}".format(self.health, self.max_health),  bg = "white", font = ("Helvetica", 14))
         self.health_stats.grid(column = 0, row = 1)
         self.strength_stats = Label(main_container, text = "Strength: 4/4", font = ("Helvetica", 14), bg = "white")
         self.strength_stats.grid(column = 0, row = 2)
         self.equipment_stats = Label(main_container, text = "Lab Equipment: 0/3", font = ("Helvetica", 14), bg = "white")
         self.equipment_stats.grid(column = 0, row = 3)
+        self.coffee_count = Label(main_container, text = "Coffee: {}".format(self.coffee), bg = "white")
+        self.coffee_count.grid(column = 2, row = 3)
+        self.location_stats = Label(main_container, text = "Location: {}".format(self.location), bg = "white")
+        self.location_stats.grid(column = 1, row = 3)
+
 
     def disable_buttons(self):
         self.map_button.config(state = DISABLED)
