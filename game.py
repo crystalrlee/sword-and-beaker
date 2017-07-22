@@ -22,18 +22,26 @@ class Game():
         self.avatar.grid(column = 0, row = 0)
 
         # Game text area
-        self.game_text = Label(main_container, fg = "green2", bg = "grey1", height = "30", width = "92", text = """Sword & Beaker\nA Python Adventure Game\n
-        \nYou are a scientist whose funding has been cut. You must travel from The City to The Mountains to Antarctica,
-        battling enemies along the way in order to find the lab equipment to carry out your condensed matter experiment.
-        \n Good luck!""")
+        self.game_text = Label(main_container, fg = "green2", bg = "grey1", wraplength = "500", height = "28", width = "92",
+            font = ("Liberation Mono", 10), text = (
+            "Sword & Beaker\nA Python Adventure Game\n\n"
+            "You are a scientist whose funding has been cut."
+            "You must travel from The City to The Mountains to Antarctica, battling enemies along the way"
+            "in order to find the lab equipment to carry out your condensed matter experiment.\n"
+            "Click on the Map to get started.\n\nGood luck!"))
         self.game_text.grid(column = 1, row = 0, columnspan = 5)
+
+        # State variables: coffee, health, max health, strength
+        self.coffee = 1
+        self.health = 3
+        self.max_health = 5
 
         # Buttons
         self.map_button = Button(main_container, text="MAP", command = self.open_map)
         self.map_button.grid(column = 1, row = 2)
-        self.coffee_button = Button(main_container, text="DRINK COFFEE")
+        self.coffee_button = Button(main_container, text="DRINK COFFEE", state = DISABLED, command = self.drink_coffee)
         self.coffee_button.grid(column = 2, row = 2)
-        self.seek_fight_button = Button(main_container, text="PICK A FIGHT", command = self.start_fight)
+        self.seek_fight_button = Button(main_container, text="PICK A FIGHT", state = DISABLED, command = self.start_fight)
         self.seek_fight_button.grid(column = 3, row = 2)
         self.attack_button = Button(main_container, text = "ATTACK!", state = DISABLED)
         self.attack_button.grid(column = 4, row = 2)
@@ -41,7 +49,7 @@ class Game():
         self.run_away_button.grid(column = 5, row = 2)
 
         # Health/Strength/Equipment Stats
-        self.health_stats = Label(main_container, text = "Health: 5/5",  bg = "white", font = ("Helvetica", 14))
+        self.health_stats = Label(main_container, text = "Health: {}/{}".format(self.health, self.max_health),  bg = "white", font = ("Helvetica", 14))
         self.health_stats.grid(column = 0, row = 1)
         self.strength_stats = Label(main_container, text = "Strength: 4/4", font = ("Helvetica", 14), bg = "white")
         self.strength_stats.grid(column = 0, row = 2)
@@ -93,7 +101,21 @@ class Game():
         # Enables Run Away and Attack! buttons
         self.run_away_button.config(state = NORMAL)
         self.attack_button.config(state = NORMAL)
+        if self.location == "city":
+            self.game_text.config(text = "You encounter {}.".format("Evil Landlords"))
+        else:
+            pass
 
+    def drink_coffee(self):
+        if self.coffee == 0:
+            self.game_text.config(text = "Sadly, you are out of coffee. :(\nTry picking a fight to find some.")
+        elif self.health == self.max_health:
+            self.game_text.config(text = "Strangely enough, you don't actually need coffee right now.")
+        else:
+            self.coffee -= 1
+            self.health = self.max_health
+            self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
+            self.game_text.config(text = "You're suddenly feeling much better.")
 
 
 def main():
