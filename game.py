@@ -31,7 +31,7 @@ class Game():
         self.coffee_button.grid(column = 2, row = 2)
         self.seek_fight_button = Button(main_container, text="PICK A FIGHT")
         self.seek_fight_button.grid(column = 3, row = 2)
-        self.run_away_button = Button(main_container, text="RUN AWAY!")
+        self.run_away_button = Button(main_container, text="RUN AWAY!", state = DISABLED)
         self.run_away_button.grid(column = 4, row = 2)
 
         # Health/Strength/Equipment Stats
@@ -46,13 +46,13 @@ class Game():
         self.map_button.config(state = DISABLED)
         self.coffee_button.config(state = DISABLED)
         self.seek_fight_button.config(state = DISABLED)
-        self.run_away_button.config(state = DISABLED)
+        # self.run_away_button.config(state = DISABLED)
 
     def enable_buttons(self):
         self.map_button.config(state = NORMAL)
         self.coffee_button.config(state = NORMAL)
         self.seek_fight_button.config(state = NORMAL)
-        self.run_away_button.config(state = NORMAL)
+        # self.run_away_button.config(state = NORMAL)
 
     def open_map(self):
         # Sets map window
@@ -73,7 +73,13 @@ class Game():
         self.map_window.destroy()
         # Enables buttons on root window
         self.enable_buttons()
-
+        # Changes game text
+        self.game_text.config(text = (
+            "You enter \"The City\"!\n\nA concrete realm of sunshine, adventure, and probably gentrification.\n\n"
+            "From here you can heal your wounds with a cup of coffee,\n"
+            "pick a fight with the locals, \n"
+            "or go somewhere else with your map. \n\n"
+            "Enjoy it before your rent goes up again."))
 
 
 
@@ -81,7 +87,6 @@ class Game():
 def main():
     root = Tk() # Creating a window object called root
     game = Game(root)
-
     root.mainloop() # Starts Tk program gameloop -- now
 
 main()
