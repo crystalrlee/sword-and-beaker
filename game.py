@@ -26,14 +26,14 @@ class Game():
             font = ("Liberation Mono", 10), text = (
             "Sword & Beaker\nA Python Adventure Game\n\n"
             "You are a scientist whose funding has been cut."
-            "You must travel from The City to The Mountains to Antarctica, battling enemies along the way"
-            "in order to find the lab equipment to carry out your condensed matter experiment.\n"
+            "You must travel from the City to the Mountains to Antarctica, battling enemies along the way "
+            "in order to find your missing lab equipment.\n"
             "Click on the Map to get started.\n\nGood luck!"))
         self.game_text.grid(column = 1, row = 0, columnspan = 5)
 
         # State variables: coffee, health, max health, strength
-        self.coffee = 1
-        self.health = 3
+        self.coffee = 0
+        self.health = 5
         self.max_health = 5
 
         # Buttons
@@ -116,7 +116,6 @@ class Game():
             self.health = self.max_health
             self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
             self.game_text.config(text = "You're suddenly feeling much better.")
-
 
 def main():
     root = Tk() # Creating a window object called root
