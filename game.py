@@ -104,7 +104,7 @@ class Game():
         self.location = "city"
 
     # Checks location, populates enemies for that location
-    def get_bad_guy(self):
+    def reset_bad_guys(self):
         if self.location == "city":
             self.enemy0 = {
                 "name": "an Evil Landlord", "attack phrase": "They pummel you with eviction notices.",
@@ -117,7 +117,7 @@ class Game():
 
     # Gets enemies, diables buttons on root window, enables Run Away and Attack! buttons
     def fight_setup(self):
-        self.get_bad_guy()
+        self.reset_bad_guys()
         self.disable_buttons()
         self.run_away_button.config(state = NORMAL)
         self.run_away_button.bind("<Button-1>", self.enter_the_city) # If clicked, should return player to main location text
@@ -131,21 +131,26 @@ class Game():
             enemy = self.enemy0
         else:
             enemy = self.enemy1
+        # Encounter a bad get_bad_guy
+        fight_text = "You encounter {}.\n They have {} strength and {} health.\n\n".format(enemy["name"], enemy["strength"], enemy["health"])
+        self.game_text.config(text = fight_text)
         # Decides whether you attack first or the enemy gets the jump on you
         attack_first = random.randint(0,1)
         if attack_first == 0:
             who_attacks_first = "You attack them with your lightning fast reflexes. They lose {} health.".format(self.strength)
             enemy["health"] -= self.strength
         else:
-            who_attacks_first = "They get the jump on you. You lose {} health.".format(enemy["strength"])
+            who_attacks_first = "{} You lose {} health.".format(enemy["attack phrase"], enemy["strength"])
             # Checks to see how much health you have (you can't go less than 1)
             if self.health > enemy["strength"]:
                 self.health -= enemy["strength"]
             else:
                 self.health = 0
             self.fight_health_stats()
-        self.game_text.config(text = "You encounter {}.\n They have {} strength and {} health.\n\n{}".format(enemy["name"], enemy["strength"], enemy["health"], who_attacks_first))
+        fight_text = fight_text + "{}".format(who_attacks_first)
+        self.game_text.config(text = fight_text)
 
+    # Called when drink coffee button is clicked
     def drink_coffee(self):
         if self.coffee == 0:
             self.game_text.config(text = "Sadly, you are out of coffee. :(\nTry picking a fight to find some.")
