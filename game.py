@@ -32,9 +32,9 @@ class Game():
         self.game_text.grid(column = 1, row = 0, columnspan = 5)
 
         # State variables: coffee count, health, max health, location
-        self.coffee = 0
-        self.health = 5
-        self.max_health = 5
+        self.coffee = 1
+        self.health = 10
+        self.max_health = 10
         self.strength = 4
         self.location = "Intro"
 
@@ -70,12 +70,14 @@ class Game():
         self.map_button.config(state = DISABLED)
         self.coffee_button.config(state = DISABLED)
         self.seek_fight_button.config(state = DISABLED)
-        # self.run_away_button.config(state = DISABLED)
+        self.run_away_button.config(state = DISABLED)
 
     def enable_buttons(self):
         self.map_button.config(state = NORMAL)
         self.coffee_button.config(state = NORMAL)
         self.seek_fight_button.config(state = NORMAL)
+        self.run_away_button.config(state = DISABLED)
+        self.attack_button.config(state = DISABLED)
 
     # Sets up map window, displays map image, disables game buttons
     def open_map(self):
@@ -96,59 +98,109 @@ class Game():
         self.enable_buttons()
         # Changes game text
         self.game_text.config(text = (
-            "You enter \"The City\"!\n\nA concrete realm of sunshine, adventure, and probably gentrification.\n\n"
+            "You enter \"The City\"!\n\nA concrete realm of sunshine, adventure, and gentrification.\n\n"
             "From here you can heal your wounds with a cup of coffee,\n"
             "pick a fight with the locals, \n"
-            "or go somewhere else with your map. \n\n"
+            "or go somewhere else on your map. \n\n"
             "Enjoy it before your rent goes up again."))
-        self.location = "city"
+        self.location = "The City"
+        self.location_stats.config(text = "Location: {}".format(self.location))
 
     # Checks location, populates enemies for that location
-    def reset_bad_guys(self):
-        if self.location == "city":
-            self.enemy0 = {
-                "name": "an Evil Landlord", "attack phrase": "They pummel you with eviction notices.",
-                "strength": 2, "health": 5}
-            self.enemy1 = {
-                "name":"a Pizza Rat", "attack phrase": "They attack you with something clever insert here.",
-                "strength": 3, "health": 5}
+    def get_enemy(self):
+        pick = random.randint(0,2)
+        if self.location == "The City":
+            if pick == 0:
+                self.enemy = {
+                    "name": "an Evil Landlord", "attack phrase": "They pummel you with eviction notices.",
+                    "strength": 2, "health": 5}
+            if pick == 2:
+                self.enemy = {
+                    "name": "a Pizza Rat", "attack phrase": "They attack you with clever memes.",
+                    "strength": 3, "health": 4}
+            else:
+                self.enemy = {
+                    "name": "bedbugs", "attack phrase": "Did you know that bedbugs can survive for months without food or water?",
+                    "strength": 2, "health": 6}
+                }
         else:
             pass
+        return self.enemy
 
     # Gets enemies, diables buttons on root window, enables Run Away and Attack! buttons
     def fight_setup(self):
-        self.reset_bad_guys()
         self.disable_buttons()
         self.run_away_button.config(state = NORMAL)
         self.run_away_button.bind("<Button-1>", self.enter_the_city) # If clicked, should return player to main location text
         self.attack_button.config(state = NORMAL)
-        self.fight()
+        self.enemy = self.get_enemy()
+        # Encounter an ememy
+        self.fight_text = "You encounter {}.\n They have {} strength and {} health.\n\n".format(self.enemy["name"], self.enemy["strength"], self.enemy["health"])
+        self.game_text.config(text = self.fight_text)
+        self.attack_button.bind("<Button-1>", self.attack)
 
-    def fight(self):
-        # Chooses a random enemy
-        pick = random.randint(0,1)
-        if pick == 0:
-            enemy = self.enemy0
-        else:
-            enemy = self.enemy1
-        # Encounter a bad get_bad_guy
-        fight_text = "You encounter {}.\n They have {} strength and {} health.\n\n".format(enemy["name"], enemy["strength"], enemy["health"])
-        self.game_text.config(text = fight_text)
+    # Handles the logic of fights when player presses Attack button
+    def attack(self, event):
         # Decides whether you attack first or the enemy gets the jump on you
-        attack_first = random.randint(0,1)
-        if attack_first == 0:
-            who_attacks_first = "You attack them with your lightning fast reflexes. They lose {} health.".format(self.strength)
-            enemy["health"] -= self.strength
-        else:
-            who_attacks_first = "{} You lose {} health.".format(enemy["attack phrase"], enemy["strength"])
-            # Checks to see how much health you have (you can't go less than 1)
-            if self.health > enemy["strength"]:
-                self.health -= enemy["strength"]
+        if self.health > 0 and self.enemy["health"] > 0:
+            attack_first = random.randint(0,1)
+            if attack_first == 0:
+                who_attacks_first = "You attack them with your lightning fast reflexes. They lose {} health.".format(self.strength)
+                self.enemy["health"] -= self.strength
             else:
-                self.health = 0
-            self.fight_health_stats()
-        fight_text = fight_text + "{}".format(who_attacks_first)
-        self.game_text.config(text = fight_text)
+                who_attacks_first = "{} You lose {} health.".format(self.enemy["attack phrase"], self.enemy["strength"])
+                # Checks to see how much health you have (you can't go less than 0)
+                if self.health > self.enemy["strength"]:
+                    self.health -= self.enemy["strength"]
+                # Makes sure player health can't go less than 0
+                else:
+                    self.health = 0
+                self.fight_health_stats()
+            #Updates fight text
+            self.game_text.config(text = "{}".format(who_attacks_first))
+        # Checks to see if player won fight or list game
+        if self.enemy["health"] <= 0:
+            self.game_text.config(text = "{}\n\nYou win!".format(who_attacks_first))
+            self.enable_buttons()
+        if self.health < 1:
+            self.game_text.config(text = "{}\n\nI need to do an end game thingy. Program. Thing.\nThe End.".format(who_attacks_first))
+
+    # Deals with the logic of loot drops
+    # def get_loot(self):
+    #     possible_loot = {
+    #         "special item": None ,
+    #         "coffee": "It's good for what ails ya.",
+    #         "safety goggles": "Way to have good lab safety practices. Your max health increases.",
+    #         "pocket protector": "You're not sure what this does, but you feel much safer anyway."
+    #         "basic sword": "It's not a very good sword, but it is heavy. After carrying it for awhile you feel much stronger!"
+    #         "mylar lab coat": ""
+    #     }
+    #
+    #     d = {
+    #         'cateogry1': [
+    #             {
+    #                 'name': 'banana',
+    #                 'desc': 'it is yellow'
+    #             },
+    #             {
+    #                 'name': 'bird',
+    #                 'desc': 'it flies'
+    #             }
+    #         ],
+    #         'category2': []
+    #     }
+    #     item = random.choice(d['category1'])
+    #     item['name']
+    #     item['desc']
+    #
+    #     if location == "city" and self.equipment_stats < 1:
+    #         possible_loot["special item"] = "Electrostatic Analyzer"
+    #     else:
+    #         pass
+    #     # Probability of coffee 1:2, probability of strength/max_health increase 1:4, probability of special item 1:6
+    #     coffee_roll = random.randint(0,1):
+    #     if coffee_roll == 1:
+    #         pass
 
     # Called when drink coffee button is clicked
     def drink_coffee(self):
@@ -160,7 +212,8 @@ class Game():
             self.coffee -= 1
             self.health = self.max_health
             self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
-            self.game_text.config(text = "You're suddenly feeling much better.")
+            self.game_text.config(text = "Coffee makes everything feel better.")
+            self.coffee_count.config(text = "Coffee: {}".format(self.coffee))
 
 def main():
     root = Tk() # Creating a window object called root
