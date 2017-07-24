@@ -31,12 +31,13 @@ class Game():
             "Click on the Map to get started.\n\nGood luck!"))
         self.game_text.grid(column = 1, row = 0, columnspan = 5)
 
-        # State variables: coffee count, health, max health, location
+        # State variables: coffee count, health, max health, location, lab equipment count
         self.coffee = 1
         self.health = 10
         self.max_health = 10
         self.strength = 4
         self.location = "Intro"
+        self.equipment_count = 0
 
         # Buttons
         self.map_button = Button(main_container, text="MAP", command = self.open_map)
@@ -55,7 +56,7 @@ class Game():
         self.health_stats.grid(column = 0, row = 1)
         self.strength_stats = Label(main_container, text = "Strength: {}".format(self.strength), font = ("Helvetica", 14), bg = "white")
         self.strength_stats.grid(column = 0, row = 2)
-        self.equipment_stats = Label(main_container, text = "Lab Equipment: 0/3", font = ("Helvetica", 14), bg = "white")
+        self.equipment_stats = Label(main_container, text = "Lab Equipment: {}/3".format(self.equipment_count), font = ("Helvetica", 14), bg = "white")
         self.equipment_stats.grid(column = 0, row = 3)
         self.coffee_count = Label(main_container, text = "Coffee: {}".format(self.coffee), bg = "white")
         self.coffee_count.grid(column = 2, row = 3)
@@ -122,7 +123,6 @@ class Game():
                 self.enemy = {
                     "name": "bedbugs", "attack phrase": "Did you know that bedbugs can survive for months without food or water?",
                     "strength": 2, "health": 6}
-                }
         else:
             pass
         return self.enemy
@@ -142,65 +142,74 @@ class Game():
     # Handles the logic of fights when player presses Attack button
     def attack(self, event):
         # Decides whether you attack first or the enemy gets the jump on you
-        if self.health > 0 and self.enemy["health"] > 0:
-            attack_first = random.randint(0,1)
-            if attack_first == 0:
-                who_attacks_first = "You attack them with your lightning fast reflexes. They lose {} health.".format(self.strength)
-                self.enemy["health"] -= self.strength
+        attack_first = random.randint(0,1)
+        if attack_first == 0:
+            who_attacks_first = "You attack them with your lightning fast reflexes. They lose {} health.".format(self.strength)
+            self.enemy["health"] -= self.strength
+        else:
+            who_attacks_first = "{} You lose {} health.".format(self.enemy["attack phrase"], self.enemy["strength"])
+            # Checks to see how much health you have (you can't go less than 0)
+            if self.health > self.enemy["strength"]:
+                self.health -= self.enemy["strength"]
+            # Makes sure player health can't go less than 0
             else:
-                who_attacks_first = "{} You lose {} health.".format(self.enemy["attack phrase"], self.enemy["strength"])
-                # Checks to see how much health you have (you can't go less than 0)
-                if self.health > self.enemy["strength"]:
-                    self.health -= self.enemy["strength"]
-                # Makes sure player health can't go less than 0
-                else:
-                    self.health = 0
-                self.fight_health_stats()
-            #Updates fight text
-            self.game_text.config(text = "{}".format(who_attacks_first))
-        # Checks to see if player won fight or list game
+                self.health = 0
+            self.fight_health_stats()
+
+        # Checks to see if player won fight, runs get lot funciton and outputs loot won
         if self.enemy["health"] <= 0:
-            self.game_text.config(text = "{}\n\nYou win!".format(who_attacks_first))
+            loot = self.get_loot()
+            self.game_text.config(text = "{}\n\nYou win! You get {}!".format(who_attacks_first, loot))
             self.enable_buttons()
-        if self.health < 1:
+        # Checks to see if player lost game
+        elif self.health < 1:
             self.game_text.config(text = "{}\n\nI need to do an end game thingy. Program. Thing.\nThe End.".format(who_attacks_first))
+            self.enable_buttons()
+        else:
+            #Updates fight text
+            self.game_text.config(text = who_attacks_first)
 
     # Deals with the logic of loot drops
-    # def get_loot(self):
-    #     possible_loot = {
-    #         "special item": None ,
-    #         "coffee": "It's good for what ails ya.",
-    #         "safety goggles": "Way to have good lab safety practices. Your max health increases.",
-    #         "pocket protector": "You're not sure what this does, but you feel much safer anyway."
-    #         "basic sword": "It's not a very good sword, but it is heavy. After carrying it for awhile you feel much stronger!"
-    #         "mylar lab coat": ""
-    #     }
-    #
-    #     d = {
-    #         'cateogry1': [
-    #             {
-    #                 'name': 'banana',
-    #                 'desc': 'it is yellow'
-    #             },
-    #             {
-    #                 'name': 'bird',
-    #                 'desc': 'it flies'
-    #             }
-    #         ],
-    #         'category2': []
-    #     }
-    #     item = random.choice(d['category1'])
-    #     item['name']
-    #     item['desc']
-    #
-    #     if location == "city" and self.equipment_stats < 1:
-    #         possible_loot["special item"] = "Electrostatic Analyzer"
-    #     else:
-    #         pass
-    #     # Probability of coffee 1:2, probability of strength/max_health increase 1:4, probability of special item 1:6
-    #     coffee_roll = random.randint(0,1):
-    #     if coffee_roll == 1:
-    #         pass
+    def get_loot(self):
+        loot = []
+        # Checks if you win a piece of lab equipment; probablility 1:6
+        if self.location == "city" and self.equipment_count < 1:
+            special_item = "Electrostatic Analyzer"
+            if random.randint(0,5) == 0:
+                self.equipment_count = 1
+                self.equipment_stats.config(text = "Lab Equipment: {}/3".format(self.equipment_count))
+                loot.append("Electrostatic Analyzer")
+        else:
+            pass
+        # Checks if you win coffee; probablility 1:3
+        if random.randint(0,1) == 0:
+            loot.append("a cup of coffee")
+            self.coffee += 1
+            self.coffee_count.config(text = "Coffee: {}".format(self.coffee))
+        # If player won nothing, let player know
+        if loot == []:
+            loot = "nothing."
+        # Gets a long string with all loot aquired
+        loot_string = ""
+        for item in loot:
+            loot_string += item
+        return loot_string
+
+        # possible_loot = {
+        #     "health item": {
+        #         "safety goggles" : "You feel much safer. Your max health increases.",
+        #         "a pocket protector": "You're not sure what this does, but you feel much safer anyway.",
+        #         "a kevlar lab coat": "Once you figure out how to walk in this thing you're going to be unstoppable. Your max health increases."
+        #         "rubber gloves": "Your max health increases as your dexterity decreases."
+        #     }
+        #     "strength item": {
+        #         "a basic sword": "It's not a very good sword, but it is heavy. After carrying it for awhile you feel much stronger!",
+        #         "a robotic dog": "An engineer's best friend. Your strength increases with its presence.",
+        #         "a robotic cat": "It won't do what you tell it to do, but it has vicious claws. Your strength increases."
+        #         "a gold-plated pipette": "Good for poking others in the eye and not much else. Your strength increases."
+        #     }
+        # }
+        # REMEMBER TO PROMPT PLAYER TO TRY NEXT LEVEL IF THEY FOUND LAB EQUIPMENT!
 
     # Called when drink coffee button is clicked
     def drink_coffee(self):
