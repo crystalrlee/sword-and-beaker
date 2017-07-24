@@ -35,6 +35,7 @@ class Game():
         self.coffee = 0
         self.health = 5
         self.max_health = 5
+        self.strength = 4
         self.location = "Intro"
 
         # Buttons
@@ -42,7 +43,7 @@ class Game():
         self.map_button.grid(column = 1, row = 2)
         self.coffee_button = Button(main_container, text="DRINK COFFEE", state = DISABLED, command = self.drink_coffee)
         self.coffee_button.grid(column = 2, row = 2)
-        self.seek_fight_button = Button(main_container, text="PICK A FIGHT", state = DISABLED, command = self.start_fight)
+        self.seek_fight_button = Button(main_container, text="PICK A FIGHT", state = DISABLED, command = self.fight_setup)
         self.seek_fight_button.grid(column = 3, row = 2)
         self.attack_button = Button(main_container, text = "ATTACK!", state = DISABLED)
         self.attack_button.grid(column = 4, row = 2)
@@ -52,7 +53,7 @@ class Game():
         # Health/Strength/Equipment Stats//Coffee count//Your location
         self.health_stats = Label(main_container, text = "Health: {}/{}".format(self.health, self.max_health),  bg = "white", font = ("Helvetica", 14))
         self.health_stats.grid(column = 0, row = 1)
-        self.strength_stats = Label(main_container, text = "Strength: 4/4", font = ("Helvetica", 14), bg = "white")
+        self.strength_stats = Label(main_container, text = "Strength: {}".format(self.strength), font = ("Helvetica", 14), bg = "white")
         self.strength_stats.grid(column = 0, row = 2)
         self.equipment_stats = Label(main_container, text = "Lab Equipment: 0/3", font = ("Helvetica", 14), bg = "white")
         self.equipment_stats.grid(column = 0, row = 3)
@@ -61,6 +62,9 @@ class Game():
         self.location_stats = Label(main_container, text = "Location: {}".format(self.location), bg = "white")
         self.location_stats.grid(column = 1, row = 3)
 
+    # Called during a fight to update health stats
+    def fight_health_stats(self):
+        self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
 
     def disable_buttons(self):
         self.map_button.config(state = DISABLED)
@@ -73,18 +77,16 @@ class Game():
         self.coffee_button.config(state = NORMAL)
         self.seek_fight_button.config(state = NORMAL)
 
+    # Sets up map window, displays map image, disables game buttons
     def open_map(self):
-        # Sets map window
         self.map_window = Toplevel(width = 600, height = 400)
         self.map_window.resizable(False, False)
         self.map_window.title("Map")
-        # Sets map image
         self.map_image = PhotoImage(file = "map-all.gif")
         self.background_label = Label(self.map_window, image = self.map_image)
         self.background_label.bind("<Button-1>", self.enter_the_city)
         self.background_label.bind("<Destroy>", self.enter_the_city)
         self.background_label.pack()
-        # Disables buttons on root window
         self.disable_buttons()
 
     def enter_the_city(self, event):
@@ -101,22 +103,54 @@ class Game():
             "Enjoy it before your rent goes up again."))
         self.location = "city"
 
-    def start_fight(self):
-        # Disables buttons on root window
-        self.disable_buttons()
-        # Enables Run Away and Attack! buttons
-        self.run_away_button.config(state = NORMAL)
-        self.attack_button.config(state = NORMAL)
+    # Checks location, populates enemies for that location
+    def get_bad_guy(self):
         if self.location == "city":
-            self.game_text.config(text = "You encounter {}.".format("Evil Landlords"))
+            self.enemy0 = {
+                "name": "an Evil Landlord", "attack phrase": "They pummel you with eviction notices.",
+                "strength": 2, "health": 5}
+            self.enemy1 = {
+                "name":"a Pizza Rat", "attack phrase": "They attack you with something clever insert here.",
+                "strength": 3, "health": 5}
         else:
             pass
+
+    # Gets enemies, diables buttons on root window, enables Run Away and Attack! buttons
+    def fight_setup(self):
+        self.get_bad_guy()
+        self.disable_buttons()
+        self.run_away_button.config(state = NORMAL)
+        self.run_away_button.bind("<Button-1>", self.enter_the_city) # If clicked, should return player to main location text
+        self.attack_button.config(state = NORMAL)
+        self.fight()
+
+    def fight(self):
+        # Chooses a random enemy
+        pick = random.randint(0,1)
+        if pick == 0:
+            enemy = self.enemy0
+        else:
+            enemy = self.enemy1
+        # Decides whether you attack first or the enemy gets the jump on you
+        attack_first = random.randint(0,1)
+        if attack_first == 0:
+            who_attacks_first = "You attack them with your lightning fast reflexes. They lose {} health.".format(self.strength)
+            enemy["health"] -= self.strength
+        else:
+            who_attacks_first = "They get the jump on you. You lose {} health.".format(enemy["strength"])
+            # Checks to see how much health you have (you can't go less than 1)
+            if self.health > enemy["strength"]:
+                self.health -= enemy["strength"]
+            else:
+                self.health = 0
+            self.fight_health_stats()
+        self.game_text.config(text = "You encounter {}.\n They have {} strength and {} health.\n\n{}".format(enemy["name"], enemy["strength"], enemy["health"], who_attacks_first))
 
     def drink_coffee(self):
         if self.coffee == 0:
             self.game_text.config(text = "Sadly, you are out of coffee. :(\nTry picking a fight to find some.")
         elif self.health == self.max_health:
-            self.game_text.config(text = "Strangely enough, you don't actually need coffee right now.")
+            self.game_text.config(text = "Strangely enough, you don't actually want coffee right now.")
         else:
             self.coffee -= 1
             self.health = self.max_health
