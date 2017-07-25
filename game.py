@@ -208,39 +208,41 @@ class Game():
                     "attack phrase": "He disproves his existance while making you regret yours.",
                     "strength": 6,
                     "health": 9}
-        elif self.location == "Antarctica":  # total stats = 30
+        elif self.location == "Antarctica":  # total stats = 26
             if pick == 0:
                 self.enemy = {
                     "name": "a polar bear",
                     "attack phrase": "Climate change must be getting pretty bad to find polar bears in Antarctica!",
                     "strength": 16,
-                    "health": 14}
+                    "health": 10}
             if pick == 1:
                 self.enemy = {
                     "name": "rabid penguins", "attack phrase": "They just look so adorable as they try to peck your eyes out.",
-                    "strength": 14 , "health": 16}
+                    "strength": 12 ,
+                    "health": 14}
             else:
                 self.enemy = {
                     "name": "rougue astronomers", "attack phrase": "They've had nothing but ramen for weeks, so they're pretty grumpy.",
-                    "strength": 15, "health": 15}
-        else:     # total stats = 50
+                    "strength": 14,
+                    "health": 12}
+        else:     # total stats = 40
             if pick == 0:
                 self.enemy = {
                     "name": "the replicability crisis",
                     "attack phrase": "Do we even know anything?!",
-                    "strength": 30,
+                    "strength": 20,
                     "health": 20}
             if pick == 1:
                 self.enemy = {
                     "name": "science denialists",
                     "attack phrase": "They hit you with homeopathic weapons, which do no damage. Unfortunately, science denialism causes real, widespread harm.",
                     "strength": 25 ,
-                    "health": 25}
+                    "health": 15}
             else:
                 self.enemy = {
                     "name": "a giant pile of unorganized data",
                     "attack phrase": "These columns and rows just make no sense.",
-                    "strength": 20,
+                    "strength": 10,
                     "health": 30}
         return self.enemy
 
