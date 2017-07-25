@@ -279,8 +279,8 @@ class Game():
 
         # Checks to see if player lost game
         elif self.health < 1:
-            self.game_text.config(text = "GAME OVER.\n\nYou lose the game. Try again from the beginning."
-            "And remember, in science, everyone wins when we learn. Except you. You still lose. Sorry.")
+            self.game_text.config(text = "GAME OVER.\n\nYou lose the game. You'll have to try again from the beginning. Please close the window and reopen the game.\n\n "
+            "And remember: in science everyone wins when we learn. Except you. You still lose. Sorry.")
             self.end_game()
 
         #Updates fight text
@@ -356,11 +356,11 @@ class Game():
 
         # Gets a long string with all loot aquired
         loot_string = ""
-        for i in range(len(loot)):
+        for i in range(len(self.loot)):
             if i == 0:
-                loot_string += "{}\n".format(loot[i])
+                loot_string += "{}\n".format(self.loot[i])
             else:
-                loot_string += "\nYou also won {}".format(loot[i])
+                loot_string += "\nYou also won {}".format(self.loot[i])
         # Makes sure player doesn't get an empty string
         if loot_string == "":
             loot_string = "nothing."
