@@ -331,12 +331,14 @@ class Game():
                 "a pocket protector. You're not sure what this does, but you feel much safer anyway.\n\nYour max health increases.",
                 "a kevlar lab coat. Once you figure out how to walk in this thing you're going to be unstoppable.\n\nYour max health increases.",
                 "rubber gloves.\n\nYour max health increases as your dexterity decreases."
+                "a bottle of deionized water. As long as you remember to add it before the acid, you'll be fine.\n\nYour max health increases."
             ],
             "strength item": [
                 "a basic sword. It's not a very good sword, but it is heavy.\n\nAfter carrying it for awhile you feel much stronger!",
                 "a robotic dog, an engineer's best friend.\n\nYour strength increases with its presence.",
                 "a robotic cat. It won't do what you tell it to do, but it has vicious claws.\n\nYour strength increases.",
-                "a gold-plated pipette. Good for poking others in the eye and not much else.\n\nYour strength increases."
+                "a gold-plated pipette. Good for poking enemies in the eye and not much else.\n\nYour strength increases."
+                "a pen. It's fairly mighty, but you decide to hang onto your sword just in case.\n\nYour strength increases."
             ]
         }
 
