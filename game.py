@@ -17,7 +17,7 @@ class Game():
         main_container.grid()
 
         # Avatar label
-        self.avatar_image = PhotoImage(file = "avatar.gif")
+        self.avatar_image = PhotoImage(file = "avatar1.gif")
         self.avatar = Label(main_container, image = self.avatar_image, borderwidth = 0)
         self.avatar.grid(column = 5, row = 2, rowspan = 4)
 
