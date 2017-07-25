@@ -26,7 +26,7 @@ class Game():
         self.map_image2 = PhotoImage(file = "map-city-mountains.gif")
         self.map_image3 = PhotoImage(file = "map-city-mountains-antarctica.gif")
         self.map_image4 = PhotoImage(file = "map-all-color1.gif")
-        self.map_label = Label(main_container, image = self.map_image, borderwidth = 5)
+        self.map_label = Label(main_container, image = self.map_image, borderwidth = 5, cursor = "hand1")
         self.map_label.grid(column = 4, columnspan = 2, row = 0)
         self.map_label.bind("<Button-1>", self.on_map_click)
 
@@ -48,13 +48,13 @@ class Game():
         self.equipment_count = 0
 
         # Buttons
-        self.coffee_button = Button(main_container, text="DRINK COFFEE", state = DISABLED, command = self.drink_coffee)
+        self.coffee_button = Button(main_container, text="DRINK COFFEE", state = DISABLED, command = self.drink_coffee, cursor = "coffee_mug")
         self.coffee_button.grid(column = 0, row = 4)
-        self.seek_fight_button = Button(main_container, text="PICK A FIGHT", state = DISABLED, command = self.fight_setup)
+        self.seek_fight_button = Button(main_container, text="PICK A FIGHT", state = DISABLED, command = self.fight_setup, cursor = "hand2")
         self.seek_fight_button.grid(column = 1, row = 4)
-        self.attack_button = Button(main_container, text = "ATTACK!", state = DISABLED)
+        self.attack_button = Button(main_container, text = "ATTACK!", state = DISABLED, cursor = "hand2")
         self.attack_button.grid(column = 2, row = 4)
-        self.run_away_button = Button(main_container, text="RUN AWAY!", state = DISABLED)
+        self.run_away_button = Button(main_container, text="RUN AWAY!", state = DISABLED, cursor = "hand2")
         self.run_away_button.grid(column = 3, row = 4)
 
         # Health/Strength/Equipment Stats//Coffee count//Your location
@@ -74,22 +74,47 @@ class Game():
     # Figures out where user clicked, sends to correct land and/or gives unlock message
     def on_map_click(self, event):
         # user clicked The City
-        if self.equipment_count == 0:
-            if 28 <= event.x <= 128 and 88 <= event.y <= 200:
-                self.enter_the_city(event)
-            else:
-                self.game_text.config(text = "That area isn't unlocked yet. Try picking a fight to find more lab equipment.")
-        elif 287 <= event.x <= 482 and 74 <= event.y <= 170:
-            self.enter_the_mountains()
+        if 28 <= event.x <= 128 and 88 <= event.y <= 200:
+            self.enter_the_city(event)
+        # player clicks the mountains, and has at least 1 piece of equipment
+        elif 287 <= event.x <= 482 and 74 <= event.y <= 170 and self.equipment_count > 0:
+            self.enter_the_mountains(event)
+        # player clicks antarctica, code makes sure it's unlocked
+        elif 53 <= event.x <= 175 and 235 <= event.y <= 342 and self.equipment_count > 1:
+            self.enter_antarctica(event)
+        # player clicks the lab, code makes sure it's unlocked
+        elif 300 <= event.x <= 428 and 235 <= event.y <= 336 and self.equipment_count == 3:
+            self.enter_the_lab(event)
+        else:
+            self.game_text.config(text = "That area isn't unlocked yet. Try picking a fight to find more lab equipment.")
 
-    # user clicks on the mountains when it's unlocked
-    def enter_the_mountains(self):
+    def enter_the_lab(self, event):
+        # Changes game text
+        self.game_text.config(text = (
+            "You enter \"The Lab\"!\n\n"
+            "Make sure to gather your health and strength before getting back to work..."
+            ))
+        self.location = "The Lab"
+        self.location_stats.config(text = "Location: {}".format(self.location))
+
+    def enter_antarctica(self, event):
+        # Changes game text
+        self.game_text.config(text = (
+            "You enter \"Antarctica\"!\n\n"
+            "From here you can heal your wounds with a cup of coffee,"
+            "pick a fight with the locals,"
+            "or go somewhere else on your map."
+            ))
+        self.location = "Antarctica"
+        self.location_stats.config(text = "Location: {}".format(self.location))
+
+    def enter_the_mountains(self, event):
         # Changes game text
         self.game_text.config(text = (
             "You enter \"The Mountains\"!\n\n"
-            "From here you can heal your wounds with a cup of coffee,\n"
-            "pick a fight with the locals, \n"
-            "or go somewhere else on your map. \n\n"
+            "From here you can heal your wounds with a cup of coffee,"
+            "pick a fight with the locals,"
+            "or go somewhere else on your map."
             ))
         self.location = "The Mountains"
         self.location_stats.config(text = "Location: {}".format(self.location))
@@ -101,8 +126,8 @@ class Game():
         # Changes game text
         self.game_text.config(text = (
             "You enter \"The City\"!\n\nA concrete realm of sunshine, adventure, and gentrification.\n\n"
-            "From here you can heal your wounds with a cup of coffee,\n"
-            "pick a fight with the locals, \n"
+            "From here you can heal your wounds with a cup of coffee,"
+            "pick a fight with the locals,"
             "or go somewhere else on your map."
             ))
         self.location = "The City"
@@ -127,37 +152,105 @@ class Game():
         self.run_away_button.config(state = DISABLED)
         self.attack_button.config(state = DISABLED)
 
+    def ignore(self, event):   # used to disable button click events
+        pass
+
     # Checks location, populates enemies for that location
     def get_enemy(self):
         pick = random.randint(0,2)
-        if self.location == "The City":
+        if self.location == "The City":  # total stats = 7
             if pick == 0:
                 self.enemy = {
-                    "name": "an Evil Landlord", "attack phrase": "They pummel you with eviction notices.",
-                    "strength": 2, "health": 5}
+                    "name": "an Evil Landlord",
+                    "attack phrase": "They pummel you with eviction notices.",
+                    "strength": 2,
+                    "health": 5}
             if pick == 1:
                 self.enemy = {
-                    "name": "a Pizza Rat", "attack phrase": "They attack you with clever memes.",
-                    "strength": 3, "health": 4}
+                    "name": "a Pizza Rat",
+                    "attack phrase": "They attack you with clever memes.",
+                    "strength": 3,
+                    "health": 4}
             else:
                 self.enemy = {
-                    "name": "bedbugs", "attack phrase": "Did you know that bedbugs can survive for months without food or water?",
-                    "strength": 1, "health": 6}
-        else:
-            pass
+                    "name": "bedbugs",
+                    "attack phrase": "Did you know that bedbugs can survive for months without food or water?",
+                    "strength": 1,
+                    "health": 6}
+        elif self.location == "The Mountains": # total stats = 14
+            if pick == 0:
+                self.enemy = {
+                    "name": "giant spiders",
+                    "attack phrase": "You try to explain the difference between venomous and poisonous, but they bite you anyway.",
+                    "strength": 5,
+                    "health": 8}
+            if pick == 1:
+                self.enemy = {
+                    "name": "a walking tree",
+                    "attack phrase": "It deftly ignores its lack of flexible cell walls.",
+                    "strength": 7,
+                    "health": 7}
+            else:
+                self.enemy = {
+                    "name": "Bigfoot",
+                    "attack phrase": "He disproves his existance while making you regret yours.",
+                    "strength": 6,
+                    "health": 9}
+        elif self.location == "Antarctica":  # total stats = 30
+            if pick == 0:
+                self.enemy = {
+                    "name": "a polar bear",
+                    "attack phrase": "Climate change must be getting pretty bad to find polar bears in Antarctica!",
+                    "strength": 16,
+                    "health": 14}
+            if pick == 1:
+                self.enemy = {
+                    "name": "rabid penguins", "attack phrase": "They just look so adorable as they try to peck your eyes out.",
+                    "strength": 14 , "health": 16}
+            else:
+                self.enemy = {
+                    "name": "rougue astronomers", "attack phrase": "They've had nothing but ramen for weeks, so they're pretty grumpy.",
+                    "strength": 15, "health": 15}
+        else:     # total stats = 50
+            if pick == 0:
+                self.enemy = {
+                    "name": "the replicability crisis",
+                    "attack phrase": "Do we even know anything?!",
+                    "strength": 30,
+                    "health": 20}
+            if pick == 1:
+                self.enemy = {
+                    "name": "science denialists",
+                    "attack phrase": "They hit you with homeopathic weapons, which do no damage. Unfortunately, science denialism causes real, widespread harm.",
+                    "strength": 25 ,
+                    "health": 25}
+            else:
+                self.enemy = {
+                    "name": "a giant pile of unorganized data",
+                    "attack phrase": "These columns and rows just make no sense.",
+                    "strength": 20,
+                    "health": 30}
         return self.enemy
 
     # Gets enemies, diables buttons on root window, enables Run Away and Attack! buttons
     def fight_setup(self):
         self.disable_buttons()
-        self.run_away_button.config(state = NORMAL)
-        self.run_away_button.bind("<Button-1>", self.enter_the_city) # If clicked, should return player to main location text
         self.attack_button.config(state = NORMAL)
         self.enemy = self.get_enemy()
         # Encounter an ememy
         self.fight_text = "You encounter {}.\n\n They have {} strength and {} health.\n\n".format(self.enemy["name"], self.enemy["strength"], self.enemy["health"])
         self.game_text.config(text = self.fight_text)
         self.attack_button.bind("<Button-1>", self.attack)
+        # Deals with run away button during fight
+        self.run_away_button.config(state = NORMAL)  # If clicked, should return player to main location text
+        if self.location == "The City":
+            self.run_away_button.bind("<Button-1>", self.enter_the_city)
+        elif self.location == "The Mountains":
+            self.run_away_button.bind("<Button-1>", self.enter_the_mountains)
+        elif self.location == "Antarctica":
+            self.run_away_button.bind("<Button-1>", self.enter_antarctica)
+        elif self.location == "The Lab":
+            self.run_away_button.bind("<Button-1>", self.enter_the_lab)
 
     # Handles the logic of fights when player presses Attack button
     def attack(self, event):
@@ -181,27 +274,49 @@ class Game():
             loot = self.get_loot()
             self.game_text.config(text = "{}\n\nYou win! You get {}".format(who_attacks_first, loot))
             self.enable_buttons()
+            self.attack_button.bind("<Button-1>", self.ignore)   # makes it so you can't click attack button
+            self.run_away_button.bind("<Button-1>", self.ignore)
+
         # Checks to see if player lost game
         elif self.health < 1:
-            self.game_text.config(text = "{}\n\nI need to do an end game thingy. Program. Thing.\nThe End.".format(who_attacks_first))
-            self.enable_buttons()
+            self.game_text.config(text = "GAME OVER.\n\nYou lose the game. Try again from the beginning."
+            "And remember, in science, everyone wins when we learn. Except you. You still lose. Sorry.")
+            self.end_game()
+
+        #Updates fight text
         else:
-            #Updates fight text
             self.game_text.config(text = who_attacks_first)
+
+    def add_special_item(self, special_item):
+        self.equipment_count += 1
+        self.equipment_stats.config(text = "Lab Equipment: {}/3".format(self.equipment_count))
+        loot.append(special_item)
 
     # Deals with the logic of loot drops
     def get_loot(self):
         loot = []
-        # Checks if you win a piece of lab equipment; probablility 1:6
-        if self.location == "The City" and self.equipment_count < 1:
-            special_item = "an Electrostatic Analyzer!\n The Mountains are unlocked."
-            if random.randint(0,5) == 0:
-                self.equipment_count += 1
-                self.equipment_stats.config(text = "Lab Equipment: {}/3".format(self.equipment_count))
+        # Checks if you need to win a piece of lab equipment; probablility 1:6
+        if random.randint(0,5) == 0:
+            if self.location == "The City" and self.equipment_count < 1:
+                special_item = "an Electrostatic Analyzer!\nThe Mountains are unlocked."
+                self.add_special_item(special_item)
+                self.map_label.config(image = self.map_image2)                      # updates map image to add mountains
+            elif self.location == "The Mountains" and self.equipment_count < 2:
+                special_item = "a tank of Supercooled Helium!\nAntarctica is now unlocked."
+                self.add_special_item(special_item)
+                self.map_label.config(image = self.map_image3)                      #  updates map image to add Antarctica
+            elif self.location == "Antarctica" and self.equipment_count < 3:
+                special_item = "a Cold Laser!\nThe Lab is unlocked."
+                self.add_special_item(special_item)
+                self.map_label.config(image = self.map_image4)             # updates map to add The Lab
+            elif self.location == "The Lab":
+                special_item = ("A Nobel prize!!!! You win!!!!\n\nJust kidding.\n"
+                "In all likelihood you won't be recognized for your years of hard work and tireless study for very little pay.\n\n"
+                "But you did win the game! Congratulations!")
                 loot.append(special_item)
-                self.map_label.config(image = self.map_image2)
-        else:
-            pass
+                self.end_game()
+            else:
+                pass
 
         # Checks if you win coffee; probablility 1:3
         if random.randint(0,2) == 0:
@@ -261,6 +376,15 @@ class Game():
             self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
             self.game_text.config(text = "Coffee makes everything feel better.")
             self.coffee_count.config(text = "Coffee: {}".format(self.coffee))
+
+    # Used to end the game functionality (takes no input)
+    def end_game(self):
+        self.disable_buttons()
+        self.run_away_button.config(state = DISABLED)
+        self.attack_button.config(state = DISABLED)
+        self.map_label.bind("<Button-1>", self.ignore)
+        self.attack_button.bind("<Button-1>", self.ignore)   # makes it so you can't click any buttons
+        self.run_away_button.bind("<Button-1>", self.ignore)
 
 def main():
     root = Tk() # Creating a window object called root
