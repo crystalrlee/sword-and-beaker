@@ -338,21 +338,21 @@ class Game():
                 "safety goggles. You feel much safer.\nYour max health increases.",
                 "a pocket protector. You're not sure what this does, but you feel much safer anyway.\n\nYour max health increases.",
                 "a kevlar lab coat. Once you figure out how to walk in this thing you're going to be unstoppable.\n\nYour max health increases.",
-                "rubber gloves.\n\nYour max health increases as your dexterity decreases."
+                "rubber gloves.\n\nYour max health increases as your dexterity decreases.",
                 "a bottle of deionized water. As long as you remember to add it before the acid, you'll be fine.\n\nYour max health increases."
             ],
             "strength item": [
                 "a basic sword. It's not a very good sword, but it is heavy.\n\nAfter carrying it for awhile you feel much stronger!",
                 "a robotic dog, an engineer's best friend.\n\nYour strength increases with its presence.",
                 "a robotic cat. It won't do what you tell it to do, but it has vicious claws.\n\nYour strength increases.",
-                "a gold-plated pipette. Good for poking enemies in the eye and not much else.\n\nYour strength increases."
+                "a gold-plated pipette. Good for poking enemies in the eye and not much else.\n\nYour strength increases.",
                 "a pen. It's fairly mighty, but you decide to hang onto your sword just in case.\n\nYour strength increases."
             ]
         }
 
         # Picks a random health item, checks if you win it, updates max health stats; probability 1:4
         if random.randint(0,3) == 0:
-            self.loot.append("\nYou also win {}".format(random.choice(possible_loot["health item"])))
+            self.loot.append("{}".format(random.choice(possible_loot["health item"])))
             self.max_health += 2
             self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
 
@@ -368,7 +368,7 @@ class Game():
             if i == 0:
                 loot_string += "{}\n".format(self.loot[i])
             else:
-                loot_string += "\nYou also won {}".format(self.loot[i])
+                loot_string += "\nYou also win {}\n".format(self.loot[i])
         # Makes sure player doesn't get an empty string
         if loot_string == "":
             loot_string = "nothing."
