@@ -89,6 +89,8 @@ class Game():
             self.game_text.config(text = "That area isn't unlocked yet. Try picking a fight to find more lab equipment.")
 
     def enter_the_lab(self, event):
+        # Enables buttons on root window
+        self.enable_buttons()
         # Changes game text
         self.game_text.config(text = (
             "You enter \"The Lab\"!\n\n"
@@ -98,6 +100,8 @@ class Game():
         self.location_stats.config(text = "Location: {}".format(self.location))
 
     def enter_antarctica(self, event):
+        # Enables buttons on root window
+        self.enable_buttons()
         # Changes game text
         self.game_text.config(text = (
             "You enter \"Antarctica\"!\n\n"
@@ -109,6 +113,8 @@ class Game():
         self.location_stats.config(text = "Location: {}".format(self.location))
 
     def enter_the_mountains(self, event):
+        # Enables buttons on root window
+        self.enable_buttons()
         # Changes game text
         self.game_text.config(text = (
             "You enter \"The Mountains\"!\n\n"
@@ -151,6 +157,8 @@ class Game():
         self.seek_fight_button.config(state = NORMAL)
         self.run_away_button.config(state = DISABLED)
         self.attack_button.config(state = DISABLED)
+        self.attack_button.bind("<Button-1>", self.ignore)   # makes it so you can't click attack button
+        self.run_away_button.bind("<Button-1>", self.ignore)
 
     def ignore(self, event):   # used to disable button click events
         pass
