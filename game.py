@@ -290,11 +290,11 @@ class Game():
     def add_special_item(self, special_item):
         self.equipment_count += 1
         self.equipment_stats.config(text = "Lab Equipment: {}/3".format(self.equipment_count))
-        loot.append(special_item)
+        self.loot.append(special_item)
 
     # Deals with the logic of loot drops
     def get_loot(self):
-        loot = []
+        self.loot = []
         # Checks if you need to win a piece of lab equipment; probablility 1:6
         if random.randint(0,5) == 0:
             if self.location == "The City" and self.equipment_count < 1:
@@ -313,14 +313,14 @@ class Game():
                 special_item = ("A Nobel prize!!!! You win!!!!\n\nJust kidding.\n"
                 "In all likelihood you won't be recognized for your years of hard work and tireless study for very little pay.\n\n"
                 "But you did win the game! Congratulations!")
-                loot.append(special_item)
+                self.loot.append(special_item)
                 self.end_game()
             else:
                 pass
 
         # Checks if you win coffee; probablility 1:3
         if random.randint(0,2) == 0:
-            loot.append("a cup of coffee.")
+            self.loot.append("a cup of coffee.")
             self.coffee += 1
             self.coffee_count.config(text = "Coffee: {}".format(self.coffee))
 
@@ -344,13 +344,13 @@ class Game():
 
         # Picks a random health item, checks if you win it, updates max health stats; probability 1:4
         if random.randint(0,3) == 0:
-            loot.append(random.choice(possible_loot["health item"]))
+            self.loot.append("\nYou also win {}".format(random.choice(possible_loot["health item"])))
             self.max_health += 2
             self.health_stats.config(text = "Health: {}/{}".format(self.health, self.max_health))
 
         # Picks a random health item, checks if you win it, updates max health stats; probability 1:4
         if random.randint(0,3) == 0:
-            loot.append(random.choice(possible_loot["strength item"]))
+            self.loot.append(random.choice(possible_loot["strength item"]))
             self.strength += 2
             self.strength_stats.config(text = "Strength: {}".format(self.strength))
 
