@@ -34,9 +34,13 @@ class Game():
         self.game_text = Label(main_container, fg = "green2", bg = "grey1", width = 68, height = 29, wraplength = 475,
             font = ("Liberation Mono", 12), text = (
             "Sword & Beaker\nA Python Adventure Game\n\n"
-            "You are a scientist whose funding has been cut."
-            "In order to find your missing lab equipment you must travel from the City to the Mountains to Antarctica, battling enemies along the way.\n\n"
-            "Click on the Map to get started.\n\nGood luck!"))
+            "You are a scientist whose lab funding has been cut."
+            "In order to find your missing lab equipment you must travel from the City to the Mountains to Antarctica,"
+            "battling enemies along the way.\n\n"
+            "Click on the Map of the World to get started.\n\nDrinking coffee refills your health. Finding lab equipment opens up the next level.\n"
+            "When you fight enemies, you hit them with your total strength value, and they hit you with their total strength. "
+            "Zero health ends the game: running away may save you against a strong enemy.\n\n"
+            "Good luck!"))
         self.game_text.grid(column = 0, row = 0, rowspan = 3, columnspan = 4)
 
         # State variables: coffee count, health, max health, location, lab equipment count
