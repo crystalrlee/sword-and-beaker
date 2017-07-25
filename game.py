@@ -34,8 +34,8 @@ class Game():
         self.game_text = Label(main_container, fg = "green2", bg = "grey1", width = 68, height = 29, wraplength = 475,
             font = ("Liberation Mono", 12), text = (
             "Sword & Beaker\nA Python Adventure Game\n\n"
-            "You are a scientist whose lab funding has been cut."
-            "In order to find your missing lab equipment you must travel from the City to the Mountains to Antarctica,"
+            "You are a scientist whose lab funding has been cut. "
+            "In order to find your missing lab equipment you must travel from the City to the Mountains to Antarctica, "
             "battling enemies along the way.\n\n"
             "Click on the Map of the World to get started.\n\nDrinking coffee refills your health. Finding lab equipment opens up the next level.\n"
             "When you fight enemies, you hit them with your total strength value, and they hit you with their total strength. "
@@ -109,8 +109,8 @@ class Game():
         # Changes game text
         self.game_text.config(text = (
             "You enter \"Antarctica\"!\n\n"
-            "From here you can heal your wounds with a cup of coffee,"
-            "pick a fight with the locals,"
+            "From here you can heal your wounds with a cup of coffee, "
+            "pick a fight with the locals, "
             "or go somewhere else on your map."
             ))
         self.location = "Antarctica"
@@ -122,8 +122,8 @@ class Game():
         # Changes game text
         self.game_text.config(text = (
             "You enter \"The Mountains\"!\n\n"
-            "From here you can heal your wounds with a cup of coffee,"
-            "pick a fight with the locals,"
+            "From here you can heal your wounds with a cup of coffee, "
+            "pick a fight with the locals, "
             "or go somewhere else on your map."
             ))
         self.location = "The Mountains"
@@ -352,7 +352,7 @@ class Game():
                 "a robotic dog, an engineer's best friend.\n\nYour strength increases with its presence.",
                 "a robotic cat. It won't do what you tell it to do, but it has vicious claws.\n\nYour strength increases.",
                 "a gold-plated pipette. Good for poking enemies in the eye and not much else.\n\nYour strength increases.",
-                "a pen. It's fairly mighty, but you decide to hang onto your sword just in case.\n\nYour strength increases."
+                "a pen. It's fairly mighty, but you decide to hang on to your sword just in case.\n\nYour strength increases."
             ]
         }
 
