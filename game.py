@@ -3,6 +3,9 @@
 
 from tkinter import *
 import random
+import sys
+import os
+
 
 class Game():
     def __init__(self, root):
@@ -11,6 +14,8 @@ class Game():
         root.title("Sword & Beaker")
         root.geometry("1150x635")
         root.resizable(False, False) # Makes window fixed size
+        root.attributes('-topmost', 1)
+        root.attributes('-topmost', 0)
 
         # Main container frame properties
         main_container = Frame(root, bg = "white")
@@ -60,6 +65,10 @@ class Game():
         self.attack_button.grid(column = 2, row = 4)
         self.run_away_button = Button(main_container, text="RUN AWAY!", state = DISABLED, cursor = "hand2")
         self.run_away_button.grid(column = 3, row = 4)
+        self.exit = Button(main_container, text="Exit", command = self.quit, cursor = "hand2")
+        self.exit.grid(column = 2, row = 5)
+        self.restart = Button(main_container, text="Restart", command=self.restart_program, cursor="hand2")
+        self.restart.grid(column=1, row=5)
 
         # Health/Strength/Equipment Stats//Coffee count//Your location
         self.stats_frame = Frame(main_container, bg = "papaya whip")    # Sets frame to hold Stats
@@ -74,6 +83,7 @@ class Game():
         self.equipment_stats.grid(column = 4, row = 4)
         self.coffee_count = Label(self.stats_frame, text = "Coffee: {}".format(self.coffee), bg = "papaya whip", font = ("Helvetica", 14))
         self.coffee_count.grid(column = 4, row = 5)
+
 
     # Figures out where user clicked, sends to correct land and/or gives unlock message
     def on_map_click(self, event):
@@ -402,9 +412,30 @@ class Game():
         self.attack_button.bind("<Button-1>", self.ignore)   # makes it so you can't click any buttons
         self.run_away_button.bind("<Button-1>", self.ignore)
 
-def main():
-    root = Tk() # Creating a window object called root
-    game = Game(root)
-    root.mainloop() # Starts Tk program gameloop -- now
+    def quit(self):
+        # Gets rid of window when you push quit
+        global root
+        self.root.destroy()
 
-main()
+    def restart_program(self):
+        """Restarts the current program.
+        Note: this function does not return. Any cleanup action (like
+        saving data) must be done before calling this function."""
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
+
+
+def start():
+    global root
+    root = Tk()  # Creating a window object called root
+    game = Game(root)
+
+    # Putting the window on top when it opens
+    root.lift()
+    root.call('wm', 'attributes', '.', '-topmost', True)
+    root.after_idle(root.call, 'wm', 'attributes', '.', '-topmost', False)
+
+    root.mainloop()  # Starts Tk program gameloop -- now
+
+start()
